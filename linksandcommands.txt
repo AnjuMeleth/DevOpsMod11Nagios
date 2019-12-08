@@ -95,7 +95,7 @@ See if the addressbook application is running
 
 # http://nagios-plugins.org/doc/guidelines.html =>Plugin outlines
 # https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/statetypes.html =>nagios states
-# 
+# https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/configmain.html -> configuration
 
 
 
