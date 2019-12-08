@@ -77,6 +77,7 @@ service nagios start
 # Monitoring a linux host
 ==================================
 # https://tecadmin.net/monitor-remote-linux-host-using-nagios/ => Linux host
+sudo apt-get install nagios-nrpe-server nagios-plugins
 3  vim /etc/nagios/nrpe.cfg # enter the below details
 # allowed_hosts=127.0.0.1,::1,<ipaddress of the Nagios server>
 sudo /etc/init.d/nagios-nrpe-server restart
@@ -89,13 +90,14 @@ service nagios start
 =======================
 Copy the Dockerfile and addressbook application to the node
 See if the addressbook application is running
+Run the following commands on nagios master
 225  /usr/local/nagios/libexec/check_http -H nagios -p 8094
 227  /usr/local/nagios/libexec/check_http -I nagios -p 8094 -u http://nagios:8094/addressbook
 228  /usr/local/nagios/libexec/check_tcp -H nagios -v -p 8094
 
 # http://nagios-plugins.org/doc/guidelines.html =>Plugin outlines
 # https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/statetypes.html =>nagios states
-# https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/configmain.html -> configuration
+# 
 
 
 
