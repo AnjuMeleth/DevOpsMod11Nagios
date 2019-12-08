@@ -96,7 +96,7 @@ Run the following commands on nagios master
 228  /usr/local/nagios/libexec/check_tcp -H nagios -v -p 8094
 
 # http://nagios-plugins.org/doc/guidelines.html =>Plugin outlines
-# https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/statetypes.html =>nagios states
+# https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/statetypes.html  =>nagios states
 # 
 
 
