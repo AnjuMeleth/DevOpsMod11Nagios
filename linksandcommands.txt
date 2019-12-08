@@ -1,0 +1,102 @@
+# install nagios server
+==============================
+    2  apt-get install wget build-essential unzip
+    4  apt-get update
+    6  apt-get install apache2 php
+    7  apt-get install  php-gd libgd-dev sendmail
+    9  apt-get install libapache2-mod-php
+   11  useradd nagios
+   12  groupadd nagcmd
+   13  usermod -a -G nagcmd nagios
+   14  usermod -a -G nagios,nagcmd www-data
+   15  cd ~
+   16  wget https://assets.nagios.com/downloads/nagioscore/releases/nagios-4.2.0.tar.gz
+   17  tar -xzf nagios*.tar.gz
+   18  cd nagios-4.2.0
+   19  ./configure --with-nagios-group=nagios --with-command-group=nagcmd
+   20  make all 
+   21  sudo make install
+   22  sudo make install-commandmode
+   23  sudo make install-init
+   24  sudo make install-config
+   25  sudo /usr/bin/install -c -m 644 sample-config/httpd.conf /etc/apache2/sites-available/nagios.conf
+   26  cp -R contrib/eventhandlers/ /usr/local/nagios/libexec/
+   27  chown -R nagios:nagios /usr/local/nagios/libexec/eventhandlers
+   28  cd ~
+   29  wget https://nagios-plugins.org/download/nagios-plugins-2.1.2.tar.gz
+   30  tar -xzf nagios-plugins*.tar.gz
+   33  cd nagios-plugins-2.1.2
+   34  ./configure --with-nagios-user=nagios --with-nagios-group=nagios --with-openssl
+   35  make
+   36  make install
+   41  nano /usr/local/nagios/etc/nagios.cfg => uncomment/etc/servers file
+   42  mkdir -p /usr/local/nagios/etc/servers
+   43  nano /usr/local/nagios/etc/objects/contacts.cfg
+   44  sudo a2enmod rewrite
+       sudo a2enmod cgi
+   45  sudo htpasswd -c /usr/local/nagios/etc/htpasswd.users nagiosadmin
+   46  sudo ln -s /etc/apache2/sites-available/nagios.conf /etc/apache2/sites-enabled/
+   68  nano /etc/systemd/system/nagios.service => include the below content in the file
+[unit]
+Description=Nagios
+BindTo=network.target
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+User=nagios
+Group=nagios
+Type=simple
+ExecStart=/usr/local/nagios/bin/nagios /usr/local/nagios/etc/nagios.cfg
+
+
+   69  service apache2 restart service nagios restart
+   70  systemctl enable /etc/systemd/system/nagios.service
+   71  systemctl status nagios
+   75  cd /etc/init.d/
+   87  cp /etc/init.d/nagios /etc/init.d/skeleton
+   88  nano /etc/init.d/nagios => enter the details below
+DESC="Nagios" N
+AME=nagios
+DAEMON=/usr/local/nagios/bin/nagios
+DAEMON_ARGS="-d /usr/local/nagios/etc/nagios.cfg"
+   89  systemctl start nagios
+   90  systemctl status nagios
+# Access the nagios dashboard from http://<ipaddress>/nagios
+
+# Monitoring a windows host
+====================================
+Install NSClient ++ on the windows host
+# /usr/local/nagios/var/nagios.log is the log file
+Uncomment windows.cfg option in /usr/local/nagios/etc/nagios.cfg file so that /usr/local/nagios/etc/objects/windows.cfg file is enabled
+# Restarte nagios and apache2 in Nagios master server
+service apache2 start
+service nagios start
+
+# Monitoring a linux host
+==================================
+# https://tecadmin.net/monitor-remote-linux-host-using-nagios/ => Linux host
+3  vim /etc/nagios/nrpe.cfg # enter the below details
+# allowed_hosts=127.0.0.1,::1,<ipaddress of the Nagios server>
+sudo /etc/init.d/nagios-nrpe-server restart
+# on the master create a new config file /usr/local/nagios/etc/servers/linux1.cfg with the tests
+# Restarte nagios and apache2 in Nagios master server
+service apache2 start
+service nagios start
+
+# Monitoring an application
+=======================
+Copy the Dockerfile and addressbook application to the node
+See if the addressbook application is running
+225  /usr/local/nagios/libexec/check_http -H nagios -p 8094
+227  /usr/local/nagios/libexec/check_http -I nagios -p 8094 -u http://nagios:8094/addressbook
+228  /usr/local/nagios/libexec/check_tcp -H nagios -v -p 8094
+
+# http://nagios-plugins.org/doc/guidelines.html =>Plugin outlines
+# https://assets.nagios.com/downloads/nagioscore/docs/nagioscore/3/en/statetypes.html =>nagios states
+# 
+
+
+
+
